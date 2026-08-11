@@ -1,0 +1,73 @@
+// scripts/seed-demo.js
+// Run: node scripts/seed-demo.js
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+
+function demoStore() {
+  const adminId = uuidv4();
+  const userA = uuidv4();
+  const userB = uuidv4();
+  const accountA = uuidv4();
+  const accountB = uuidv4();
+  const now = new Date().toISOString();
+
+  const store = {
+    users: {
+      [adminId]: { id: adminId, email: 'admin@example.com', fullName: 'Admin User', role: 'admin', emailVerified: true, createdAt: now, updatedAt: now },
+      [userA]: { id: userA, email: 'alice@example.com', fullName: 'Alice Customer', role: 'user', emailVerified: true, createdAt: now, updatedAt: now },
+      [userB]: { id: userB, email: 'bob@example.com', fullName: 'Bob Customer', role: 'user', emailVerified: true, createdAt: now, updatedAt: now },
+    },
+    accounts: {
+      [accountA]: {
+        id: accountA,
+        userId: userA,
+        accountNumberMasked: '****1234',
+        routingNumberMasked: '***000',
+        currency: 'USD',
+        availableCents: 500000,
+        currentCents: 500000,
+        status: 'active',
+        createdAt: now,
+        updatedAt: now,
+      },
+      [accountB]: {
+        id: accountB,
+        userId: userB,
+        accountNumberMasked: '****5678',
+        routingNumberMasked: '***000',
+        currency: 'USD',
+        availableCents: 150000,
+        currentCents: 150000,
+        status: 'active',
+        createdAt: now,
+        updatedAt: now,
+      },
+    },
+    transactions: {},
+    cardApplications: {},
+    cards: {},
+    supportTickets: {},
+    notifications: {},
+    auditLogs: {},
+  };
+
+  return store;
+}
+
+const store = demoStore();
+fs.writeFileSync('demo-store.json', JSON.stringify(store, null, 2), 'utf8');
+
+const usersArray = Object.values(store.users).map(u => ({
+  uid: u.id,
+  email: u.email,
+  fullName: u.fullName,
+  role: u.role,
+  emailVerified: u.emailVerified,
+  createdAt: u.createdAt
+}));
+fs.writeFileSync('mock-users.json', JSON.stringify(usersArray, null, 2), 'utf8');
+
+console.log('Wrote demo-store.json and mock-users.json to project root.');
+console.log('To load into the browser localStorage, open your app, open DevTools -> Console, then run:');
+console.log("localStorage.setItem('mock_db_store', `PASTE_CONTENT_OF_demo-store.json`);");
+console.log("localStorage.setItem('mock_users', `PASTE_CONTENT_OF_mock-users.json`);");
