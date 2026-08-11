@@ -1,0 +1,9 @@
+// src/services/index.ts
+import mockAuth from './mockAuth';
+import mockDb from './mockDb';
+
+// When you replace mocks with real Firebase implementations, swap these imports.
+const DEMO = import.meta.env.VITE_DEMO_MODE === 'true';
+
+export const authService = DEMO ? mockAuth : mockAuth; // replace right-hand mockAuth with real impl later
+export const dbService = DEMO ? mockDb : mockDb;
